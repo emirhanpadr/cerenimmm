@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sürpriz...</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #fff0f0 0%, #ffe0e0 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        /* Başlangıçta gizli ve yukarıda duran başlık ayarları */
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            color: #d63031;
+            font-size: 4rem;
+            margin-bottom: 40px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            
+            /* Animasyon başlangıç durumu */
+            opacity: 0;
+            transform: translateY(-30px) scale(0.9);
+            transition: opacity 1.5s ease-out, transform 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        /* İzin verilince JS ile eklenecek olan animasyon sınıfı */
+        h1.goster {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .heart-mask {
+            width: 320px;
+            height: 320px;
+            -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3C/svg%3E");
+            -webkit-mask-size: contain;
+            -webkit-mask-repeat: no-repeat;
+            -webkit-mask-position: center;
+            mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3C/svg%3E");
+            mask-size: contain;
+            mask-repeat: no-repeat;
+            mask-position: center;
+            background-color: #ffb8b8; 
+            position: relative;
+            filter: drop-shadow(0 10px 15px rgba(214, 48, 49, 0.3));
+        }
+
+        #camera-feed {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; 
+            transform: scaleX(-1); 
+        }
+
+        #status-message {
+            margin-top: 30px;
+            font-size: 1.2rem;
+            color: #d63031;
+            padding: 0 20px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+    <h1 id="main-title">Dünyanın En Güzel Kızı</h1>
+
+    <div class="heart-mask">
+        <video id="camera-feed" autoplay playsinline></video>
+    </div>
+
+    <p id="status-message">Seni görebilmem için kamera izni vermelisin... ❤️</p>
+
+    <script>
+        const videoElement = document.getElementById('camera-feed');
+        const statusMessage = document.getElementById('status-message');
+        const mainTitle = document.getElementById('main-title');
+
+        const constraints = {
+            video: {
+                facingMode: 'user'
+            }
+        };
+
+        async function initCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia(constraints);
+                videoElement.srcObject = stream;
+                
+                // Kamera açılıp görüntü gelmeye başladığında tetiklenir
+                videoElement.onloadedmetadata = () => {
+                    // İzin mesajını gizle
+                    statusMessage.style.display = 'none';
+                    // Başlığa animasyon sınıfını ekle (yazı ortaya çıksın)
+                    mainTitle.classList.add('goster');
+                };
+            } catch (err) {
+                console.error('Kamera hatası:', err);
+                statusMessage.innerHTML = 'Kameraya ulaşılamadı. Lütfen tarayıcı ayarlarından izin verdiğine emin ol! 💔';
+            }
+        }
+
+        window.addEventListener('load', initCamera);
+    </script>
+</body>
+</html>
